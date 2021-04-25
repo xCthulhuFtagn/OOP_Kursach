@@ -65,9 +65,9 @@ int main()
 
 double Connect(GearWheel Spinner, GearWheel& Spinned) {
     // i - передаточное число
-    double i = (double)Spinned.GetTeethNum()/Spinner.GetTeethNum();
-    Spinned.PutAngMom(Spinner.GetAngMom()*i);
-    Spinned.PutAngVel(Spinner.GetAngVel()*i);
+    double i = (double)Spinner.GetTeethNum()/Spinned.GetTeethNum();
+    Spinned.PutAngMom(Spinner.GetAngMom() / pow(i, 2));//E_kinetic = const => I_1*w_1 = I_2*w_2 => because i = w1/w2 => I_1 = I_2 / i^2
+    Spinned.PutAngVel(-Spinner.GetAngVel() * i);
     return i;
 }
 
