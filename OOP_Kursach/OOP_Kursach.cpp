@@ -72,49 +72,23 @@ double Connect(GearWheel Spinner, GearWheel& Spinned) {
 }
 
 //m = ToothLength / TeethNum
-GearWheel::GearWheel(unsigned TeethNumInp, double ToothLengthInp, double AngVelInp, double AngMomInp) {
+GearWheel::GearWheel(unsigned TeethNumInp, double ToothLengthInp, double AngVelInp, double AngMomInp) 
+{
     TeethNum = TeethNumInp;
     ToothLength = ToothLengthInp;
     AngVel = AngVelInp;
     AngMom = AngMomInp;
 }
-
-unsigned GearWheel::GetTeethNum() {
-    return TeethNum;
-}
-
-double GearWheel::GetRadius() { // D_e / 2
-    return ToothLength * (0.5 + 1/TeethNum); // R = D_e/2 = (D_d + 2m)/2
-}
-double GearWheel::GetWheelRimLength() {
-    return (GetRadius() - GetToothLength()) * 2 * M_PI;
-}
-double GearWheel::GetRimDotsSpeed() {
-    return AngVel * GetRadius();
-}
-double GearWheel::GetKineticEnergy() {
-    return AngMom * pow(AngVel, 2) / 2;
-}
-double GearWheel::GetToothLength() {
-    return ToothLength;
-}
-double GearWheel::GetAngVel() {
-    return AngVel;
-}
-double GearWheel::GetAngMom() {
-    return AngMom;
-}
-
-void GearWheel::PutTeethNum(unsigned input) {
-    TeethNum = input;
-}
-void GearWheel::PutToothLength(double input) {
-    ToothLength = input;
-}
-void GearWheel::PutAngVel(double input) {
-    AngVel = input;
-}
-void GearWheel::PutAngMom(double input) {
-    AngMom = input;
-}
+unsigned GearWheel::GetTeethNum() { return TeethNum; }
+double GearWheel::GetRadius() { return ToothLength * (0.5 + 1 / TeethNum); /* R = D_e/2 = (D_d + 2m)/2*/ }
+double GearWheel::GetWheelRimLength() { return (GetRadius() - GetToothLength()) * 2 * M_PI; }
+double GearWheel::GetRimDotsSpeed() { return AngVel * GetRadius(); }
+double GearWheel::GetKineticEnergy() { return AngMom * pow(AngVel, 2) / 2; }
+double GearWheel::GetToothLength() { return ToothLength; }
+double GearWheel::GetAngVel() { return AngVel; }
+double GearWheel::GetAngMom() { return AngMom; }
+void GearWheel::PutTeethNum(unsigned input) { TeethNum = input; }
+void GearWheel::PutToothLength(double input) { ToothLength = input; }
+void GearWheel::PutAngVel(double input) { AngVel = input; }
+void GearWheel::PutAngMom(double input) { AngMom = input; }
 
