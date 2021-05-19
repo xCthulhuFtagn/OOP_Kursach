@@ -40,7 +40,9 @@ private:
     double AngVel, AngMom;
 };
 
-double Connect(GearWheel, GearWheel&);
+void Connect(GearWheel&, GearWheel&);
+void RatioAngMom(GearWheel& Spinner, GearWheel& Spinned);
+void RatioKinEn(GearWheel& Spinner, GearWheel& Spinned);
 
 int main()
 {
@@ -52,23 +54,30 @@ int main()
     G3.PutToothLength(G2.GetToothLength()); 
     G4.PutTeethNum(24);
     G4.PutToothLength(G3.GetToothLength());
-    i = Connect(G1, G2);
-    cout << "Ratio of Angular Momentum of second gearwheel to the Angular Moment of first one: " << i << endl;
-    cout << "Ratio of Kinetic Energy of second gearwheel to the Kinetic Energy of first one: " << pow(i, 2) / 2 << endl;
-    i = Connect(G2, G3);
-    cout << "Ratio of Angular Momentum of third gearwheel to the Angular Moment of second one: " << i << endl;
-    cout << "Ratio of Kinetic Energy of second gearwheel to the Kinetic Energy of first one: " << pow(i, 2) / 2 << endl;
-    i = Connect(G3, G4);
-    cout << "Ratio of Angular Momentum of fourth gearwheel to the Angular Moment of third one: " << i << endl;
-    cout << "Ratio of Kinetic Energy of second gearwheel to the Kinetic Energy of first one: " << pow(i, 2) / 2 << endl;
+    Connect(G1, G2);
+    RatioAngMom(G1,G2);
+    RatioKinEn(G1,G2);
+    Connect(G2, G3);
+    RatioAngMom(G2, G3);
+    RatioKinEn(G2, G3);
+    Connect(G3, G4);
+    RatioAngMom(G3, G4);
+    RatioKinEn(G3, G4);
 }
 
-double Connect(GearWheel Spinner, GearWheel& Spinned) {
+void Connect(GearWheel& Spinner, GearWheel& Spinned) {
     // i - передаточное число
-    double i = (double)Spinner.GetTeethNum()/Spinned.GetTeethNum();
-    Spinned.PutAngMom(Spinner.GetAngMom() / pow(i, 2));//E_kinetic = const => I_1*w_1 = I_2*w_2 => because i = w1/w2 => I_1 = I_2 / i^2
-    Spinned.PutAngVel(-Spinner.GetAngVel() * i);
-    return i;
+    double i = -(double)Spinned.GetRadius()/Spinner.GetRadius();
+    Spinned.PutAngMom(Spinner.GetAngMom() * pow(i, 6));
+    Spinned.PutAngVel(Spinner.GetAngVel() * i);
+}
+
+void RatioAngMom(GearWheel& Spinner, GearWheel& Spinned) {
+    cout << "Ratio of Angular Momentum of first gearwheel to the Angular Moment of second one: " << pow(Spinner.GetRadius() / Spinned.GetRadius(), 4) << endl;
+}
+
+void RatioKinEn(GearWheel& Spinner, GearWheel& Spinned) {
+    cout << "Ratio of Kinetic Energy of first gearwheel to the Kinetic Energy of second one: " << pow(Spinner.GetRadius() / Spinned.GetRadius(), 6) << endl;
 }
 
 //m = ToothLength / TeethNum
@@ -80,7 +89,7 @@ GearWheel::GearWheel(unsigned TeethNumInp, double ToothLengthInp, double AngVelI
     AngMom = AngMomInp;
 }
 unsigned GearWheel::GetTeethNum() { return TeethNum; }
-double GearWheel::GetRadius() { return ToothLength * (0.5 + 1 / TeethNum); /* R = D_e/2 = (D_d + 2m)/2*/ }
+double GearWheel::GetRadius() { return (TeethNum+2)*ToothLength/4.5; /* R = D_e/2 = (z+2)*m/2 = (z+2)*h/4.5 */ }
 double GearWheel::GetWheelRimLength() { return (GetRadius() - GetToothLength()) * 2 * M_PI; }
 double GearWheel::GetRimDotsSpeed() { return AngVel * GetRadius(); }
 double GearWheel::GetKineticEnergy() { return AngMom * pow(AngVel, 2) / 2; }
