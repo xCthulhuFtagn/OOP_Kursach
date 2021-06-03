@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
@@ -41,12 +42,15 @@ private:
 };
 
 void Connect(GearWheel&, GearWheel&);
-void RatioAngMom(GearWheel& Spinner, GearWheel& Spinned);
-void RatioKinEn(GearWheel& Spinner, GearWheel& Spinned);
+double RatioAngMom(GearWheel& Spinner, GearWheel& Spinned);
+double RatioKinEn(GearWheel& Spinner, GearWheel& Spinned);
 
 int main()
 {
-    GearWheel G1(16, 0.25, 25.5, 16.7), G2, G3, G4;
+    const string path = "output.txt";
+    ofstream output(path);
+    setlocale(LC_ALL, "Russian");
+    GearWheel G1(1.6, 0.25, 25.5, 16.7), G2, G3, G4;
     double i;
     G2.PutTeethNum(10); 
     G2.PutToothLength(G1.GetToothLength());
@@ -54,15 +58,33 @@ int main()
     G3.PutToothLength(G2.GetToothLength()); 
     G4.PutTeethNum(24);
     G4.PutToothLength(G3.GetToothLength());
+    cout << "Входные данные" << endl;
+    cout << "Параметры первого зубчатого колеса: количество зубьев = " << G1.GetTeethNum() << " шт; длина зуба = " << G1.GetToothLength() << " м; угловая скорость = " << G1.GetAngVel() << " рад/с ; угловой момент = " << G1.GetAngMom() << endl;
+    cout << "Параметры второго зубчатого колеса: количество зубьев = " << G2.GetTeethNum() << " шт; длина зуба = " << G2.GetToothLength() << " м" << endl;
+    cout << "Параметры второго зубчатого колеса: количество зубьев = " << G3.GetTeethNum() << " шт; длина зуба = " << G3.GetToothLength() << " м" << endl;
+    cout << "Параметры второго зубчатого колеса: количество зубьев = " << G4.GetTeethNum() << " шт; длина зуба = " << G4.GetToothLength() << " м" << endl;
+    cout << "************************************************************" << endl;
+    output << "Входные данные" << endl;
+    output << "Параметры первого зубчатого колеса: количество зубьев = " << G1.GetTeethNum() << " шт; длина зуба = " << G1.GetToothLength() << " м; угловая скорость = " << G1.GetAngVel() << " рад/с ; угловой момент = " << G1.GetAngMom() << endl;
+    output << "Параметры второго зубчатого колеса: количество зубьев = " << G2.GetTeethNum() << " шт; длина зуба = " << G2.GetToothLength() << " м" << endl;
+    output << "Параметры второго зубчатого колеса: количество зубьев = " << G3.GetTeethNum() << " шт; длина зуба = " << G3.GetToothLength() << " м" << endl;
+    output << "Параметры второго зубчатого колеса: количество зубьев = " << G4.GetTeethNum() << " шт; длина зуба = " << G4.GetToothLength() << " м" << endl;
+    output << "************************************************************" << endl;
     Connect(G1, G2);
-    RatioAngMom(G1,G2);
-    RatioKinEn(G1,G2);
+    cout << "Отношение углового момента первого зубчатого колеса к угловому моменту второго: " << RatioAngMom(G1, G2) << endl;
+    cout << "Отношение кинетической энергии первого зубчатого колеса к кинетической энергии второго: " << RatioKinEn(G1, G2) << endl;
+    output << "Отношение углового момента первого зубчатого колеса к угловому моменту второго: " << RatioAngMom(G1, G2) << endl;
+    output << "Отношение кинетической энергии первого зубчатого колеса к кинетической энергии второго: " << RatioKinEn(G1, G2) << endl;
     Connect(G2, G3);
-    RatioAngMom(G2, G3);
-    RatioKinEn(G2, G3);
+    cout << "Отношение углового момента второго зубчатого колеса к угловому моменту третьего: " << RatioAngMom(G2, G3) << endl;
+    cout << "Отношение кинетической энергии второго зубчатого колеса к кинетической энергии третьего: " << RatioKinEn(G2, G3) << endl;
+    output << "Отношение углового момента второго зубчатого колеса к угловому моменту третьего: " << RatioAngMom(G2, G3) << endl;
+    output << "Отношение кинетической энергии второго зубчатого колеса к кинетической энергии третьего: " << RatioKinEn(G2, G3) << endl;
     Connect(G3, G4);
-    RatioAngMom(G3, G4);
-    RatioKinEn(G3, G4);
+    cout << "Отношение углового момента третьего зубчатого колеса к угловому моменту четвертого: " << RatioAngMom(G3, G4) << endl;
+    cout << "Отношение кинетической энергии третьего зубчатого колеса к кинетической энергии четвертого: " << RatioKinEn(G3, G4) << endl;
+    output << "Отношение углового момента третьего зубчатого колеса к угловому моменту четвертого: " << RatioAngMom(G3, G4) << endl;
+    output << "Отношение кинетической энергии третьего зубчатого колеса к кинетической энергии четвертого: " << RatioKinEn(G3, G4) << endl;
 }
 
 void Connect(GearWheel& Spinner, GearWheel& Spinned) {
@@ -72,12 +94,12 @@ void Connect(GearWheel& Spinner, GearWheel& Spinned) {
     Spinned.PutAngVel(Spinner.GetAngVel() * i);
 }
 
-void RatioAngMom(GearWheel& Spinner, GearWheel& Spinned) {
-    cout << "Ratio of Angular Momentum of first gearwheel to the Angular Moment of second one: " << pow(Spinner.GetRadius() / Spinned.GetRadius(), 4) << endl;
+double RatioAngMom(GearWheel& Spinner, GearWheel& Spinned) {
+   return pow(Spinner.GetRadius() / Spinned.GetRadius(), 4);
 }
 
-void RatioKinEn(GearWheel& Spinner, GearWheel& Spinned) {
-    cout << "Ratio of Kinetic Energy of first gearwheel to the Kinetic Energy of second one: " << pow(Spinner.GetRadius() / Spinned.GetRadius(), 6) << endl;
+double RatioKinEn(GearWheel& Spinner, GearWheel& Spinned) {
+    return pow(Spinner.GetRadius() / Spinned.GetRadius(), 6);
 }
 
 //m = ToothLength / TeethNum
