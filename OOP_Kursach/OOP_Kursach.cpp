@@ -42,6 +42,7 @@ private:
 };
 
 void Connect(GearWheel&, GearWheel&);
+double InnerConnect(GearWheel&, GearWheel&);
 double RatioAngMom(GearWheel& Spinner, GearWheel& Spinned);
 double RatioKinEn(GearWheel& Spinner, GearWheel& Spinned);
 
@@ -71,25 +72,41 @@ int main()
     output << "Параметры второго зубчатого колеса: количество зубьев = " << G4.GetTeethNum() << " шт; длина зуба = " << G4.GetToothLength() << " м" << endl;
     output << "************************************************************" << endl;
     Connect(G1, G2);
-    cout << "Отношение углового момента первого зубчатого колеса к угловому моменту второго: " << RatioAngMom(G1, G2) << endl;
+    cout << "Отношение момента импульса первого зубчатого колеса к моменту импульса второго: " << RatioAngMom(G1, G2) << endl;
     cout << "Отношение кинетической энергии первого зубчатого колеса к кинетической энергии второго: " << RatioKinEn(G1, G2) << endl;
-    output << "Отношение углового момента первого зубчатого колеса к угловому моменту второго: " << RatioAngMom(G1, G2) << endl;
+    output << "Отношение момента импульса первого зубчатого колеса к моменту импульса второго: " << RatioAngMom(G1, G2) << endl;
     output << "Отношение кинетической энергии первого зубчатого колеса к кинетической энергии второго: " << RatioKinEn(G1, G2) << endl;
     Connect(G2, G3);
-    cout << "Отношение углового момента второго зубчатого колеса к угловому моменту третьего: " << RatioAngMom(G2, G3) << endl;
+    cout << "Отношение момента импульса второго зубчатого колеса к моменту импульса третьего: " << RatioAngMom(G2, G3) << endl;
     cout << "Отношение кинетической энергии второго зубчатого колеса к кинетической энергии третьего: " << RatioKinEn(G2, G3) << endl;
-    output << "Отношение углового момента второго зубчатого колеса к угловому моменту третьего: " << RatioAngMom(G2, G3) << endl;
+    output << "Отношение момента импульса второго зубчатого колеса к моменту импульса третьего: " << RatioAngMom(G2, G3) << endl;
     output << "Отношение кинетической энергии второго зубчатого колеса к кинетической энергии третьего: " << RatioKinEn(G2, G3) << endl;
     Connect(G3, G4);
-    cout << "Отношение углового момента третьего зубчатого колеса к угловому моменту четвертого: " << RatioAngMom(G3, G4) << endl;
+    cout << "Отношение момента импульса третьего зубчатого колеса к моменту импульса четвертого: " << RatioAngMom(G3, G4) << endl;
     cout << "Отношение кинетической энергии третьего зубчатого колеса к кинетической энергии четвертого: " << RatioKinEn(G3, G4) << endl;
-    output << "Отношение углового момента третьего зубчатого колеса к угловому моменту четвертого: " << RatioAngMom(G3, G4) << endl;
+    output << "Отношение момента импульса третьего зубчатого колеса к моменту импульса четвертого: " << RatioAngMom(G3, G4) << endl;
     output << "Отношение кинетической энергии третьего зубчатого колеса к кинетической энергии четвертого: " << RatioKinEn(G3, G4) << endl;
+    cout << "Линейные скорости всех зубчатых колес: " << endl;
+    cout << "Первое колесо: " << G1.GetRimDotsSpeed() << endl;
+    cout << "Второе колесо: " << G2.GetRimDotsSpeed() << endl;
+    cout << "Третье колесо: " << G3.GetRimDotsSpeed() << endl;
+    cout << "Четвертое колесо: " << G4.GetRimDotsSpeed() << endl;
+    output << "Линейные скорости всех зубчатых колес: " << endl;
+    output << "Первое колесо: " << G1.GetRimDotsSpeed() << endl;
+    output << "Второе колесо: " << G2.GetRimDotsSpeed() << endl;
+    output << "Третье колесо: " << G3.GetRimDotsSpeed() << endl;
+    output << "Четвертое колесо: " << G4.GetRimDotsSpeed() << endl;
 }
 
 void Connect(GearWheel& Spinner, GearWheel& Spinned) {
     // i - передаточное число
-    double i = -(double)Spinned.GetRadius()/Spinner.GetRadius();
+    double i = -(double)Spinned.GetRadius()/Spinner.GetRadius(); //при внешнем зацеплении направление вращения изменяется
+    Spinned.PutAngMom(Spinner.GetAngMom() * pow(i, 6));
+    Spinned.PutAngVel(Spinner.GetAngVel() * i);
+}
+
+double InnerConnect(GearWheel& Spinner, GearWheel& Spinned) {
+    double i = (double)Spinned.GetRadius() / Spinner.GetRadius();//при внутреннем зацеплении направление вращения не изменяется
     Spinned.PutAngMom(Spinner.GetAngMom() * pow(i, 6));
     Spinned.PutAngVel(Spinner.GetAngVel() * i);
 }
