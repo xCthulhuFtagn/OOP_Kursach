@@ -42,9 +42,11 @@ private:
 };
 
 void Connect(GearWheel&, GearWheel&);
-double InnerConnect(GearWheel&, GearWheel&);
+void InnerConnect(GearWheel&, GearWheel&);
 double RatioAngMom(GearWheel& Spinner, GearWheel& Spinned);
 double RatioKinEn(GearWheel& Spinner, GearWheel& Spinned);
+double InnerRatioAngMom(GearWheel& Spinner, GearWheel& Spinned);
+double InnerRatioKinEn(GearWheel& Spinner, GearWheel& Spinned);
 
 int main()
 {
@@ -71,7 +73,7 @@ int main()
     output << "Параметры второго зубчатого колеса: количество зубьев = " << G3.GetTeethNum() << " шт; длина зуба = " << G3.GetToothLength() << " м" << endl;
     output << "Параметры второго зубчатого колеса: количество зубьев = " << G4.GetTeethNum() << " шт; длина зуба = " << G4.GetToothLength() << " м" << endl;
     output << "************************************************************" << endl;
-    Connect(G1, G2);
+    InnerConnect(G1, G2);
     cout << "Отношение момента импульса первого зубчатого колеса к моменту импульса второго: " << RatioAngMom(G1, G2) << endl;
     cout << "Отношение кинетической энергии первого зубчатого колеса к кинетической энергии второго: " << RatioKinEn(G1, G2) << endl;
     output << "Отношение момента импульса первого зубчатого колеса к моменту импульса второго: " << RatioAngMom(G1, G2) << endl;
@@ -96,6 +98,7 @@ int main()
     output << "Второе колесо: " << G2.GetRimDotsSpeed() << endl;
     output << "Третье колесо: " << G3.GetRimDotsSpeed() << endl;
     output << "Четвертое колесо: " << G4.GetRimDotsSpeed() << endl;
+    return 0;
 }
 
 void Connect(GearWheel& Spinner, GearWheel& Spinned) {
@@ -105,10 +108,11 @@ void Connect(GearWheel& Spinner, GearWheel& Spinned) {
     Spinned.PutAngVel(Spinner.GetAngVel() * i);
 }
 
-double InnerConnect(GearWheel& Spinner, GearWheel& Spinned) {
+void InnerConnect(GearWheel& Spinner, GearWheel& Spinned) {
     double i = (double)Spinned.GetRadius() / Spinner.GetRadius();//при внутреннем зацеплении направление вращения не изменяется
-    Spinned.PutAngMom(Spinner.GetAngMom() * pow(i, 6));
-    Spinned.PutAngVel(Spinner.GetAngVel() * i);
+    double R_out = Spinner.GetRadius(), R_in = R_out - Spinner.GetToothLength(), R_get = Spinned.GetRadius();
+    Spinned.PutAngMom(Spinner.GetAngMom() * pow(R_get, 4) / (pow(R_out - R_in, 2) * (R_out + R_in)));
+    Spinned.PutAngVel(Spinner.GetAngVel() / i);
 }
 
 double RatioAngMom(GearWheel& Spinner, GearWheel& Spinned) {
@@ -117,6 +121,16 @@ double RatioAngMom(GearWheel& Spinner, GearWheel& Spinned) {
 
 double RatioKinEn(GearWheel& Spinner, GearWheel& Spinned) {
     return pow(Spinner.GetRadius() / Spinned.GetRadius(), 6);
+}
+
+double InnerRatioAngMom(GearWheel& Spinner, GearWheel& Spinned) {
+    double R_0 = Spinned.GetRadius(), R_2 = Spinner.GetRadius(), R_1 = R_2 - Spinner.GetToothLength();
+    return pow(R_0, 4) / (2 * (R_2 * R_2 - R_1 * R_1) * (R_2 + R_1));
+}
+
+double InnerRatioKinEn(GearWheel& Spinner, GearWheel& Spinned) {
+    double R_0 = Spinned.GetRadius(), R_2 = Spinner.GetRadius(), R_1 = R_2 - Spinner.GetToothLength();
+    return pow(R_0, 2) * pow(R_1, 2) / (2 * (R_2 * R_2 - R_1 * R_1) * (R_2 + R_1));
 }
 
 //m = ToothLength / TeethNum
